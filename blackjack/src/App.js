@@ -6,12 +6,18 @@ import axios from 'axios';
 class App extends React.Component {
   state = {deckId: "", currentCards: [], newGame: false}
   
-  handleNewDeck() {
+  handleNewDeck = () => {
     this.getNewDeck();
   }
+
+  handleDraw = async (deckId) => {
+    this.setState({deckId: this.handleNewDeck.deck_id});
+    let res = await axios.get(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=2`)
+  }
+
   getNewDeck = async () => {
     try {
-      let res = await axios.get("https://deckofcardsapi.com/api/deck/new/");
+      let res = await axios.get("https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1");
       let deck_id = res.data.deck_id;
       this.setState({deckId: deck_id})
     } catch (err) {
@@ -22,10 +28,19 @@ class App extends React.Component {
   
   render() {
     return (
-      <div className="App">
-        <Menu />
-        <button onClick={this.handleNewDeck}>Generate Deck</button>
-      </div>
+      <>
+        <div className="App">
+          <Menu />
+          <button onClick={this.handleNewDeck}>Generate Deck</button>
+        </div>
+        <div>
+            <label>
+                Input Existing Deck: 
+                <input type="text"/>
+            </label>
+            <button onClick={this.handleDraw}>Draw</button>
+        </div>
+      </>
     );
   }
 }
